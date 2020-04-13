@@ -2,8 +2,8 @@
 
 FactoryBot.define do
   factory :pic do
-    height { 200 }
-    width { 300 }
-    picsum_id { 1 }
+    sequence(:height) { |n| 200 + n }
+    sequence(:width) { |n| 200 + n }
+    sequence(:picsum_id, &:to_i)
   end
 end

@@ -3,7 +3,7 @@
 require 'rails_helper'
 
 RSpec.describe Pic, type: :model do
-  let(:john)    { create(:existing_user) }
+  let(:john) { create(:existing_user) }
   let(:picture) { create(:pic) }
 
   it { should have_many(:liking_users) }
@@ -40,21 +40,20 @@ RSpec.describe Pic, type: :model do
   end
 
   it 'should return grayscale urls' do
-    pictures = Pic.transformed(grayscale: 2)
-    expect(pictures.all? { |pic| pic.url.split('?') == 'grayscale=2' }).to eq(true)
+    create(:pic)
+    pictures = Pic.with_all_params(grayscale: 2)[:data]
+    expect(pictures.all? { |pic| pic.url.split('?')[-1] == 'grayscale=2' }).to eq(true)
   end
 
   it 'should return blur urls' do
-    pictures = Pic.transformed(blur: 2)
-    expect(pictures.all? { |pic| pic.url.split('?') == 'blur=2' }).to eq(true)
+    create(:pic)
+    pictures = Pic.with_all_params(blur: 2)[:data]
+    expect(pictures.all? { |pic| pic.url.split('?')[-1] == 'blur=2' }).to eq(true)
   end
 
   it 'should return blurred grayscale urls' do
-    pictures = Pic.transformed(blur: 2, grayscale: 2)
-    expect(pictures.all? { |pic| pic.url.split('?') == 'grayscale=2&blur=2' }).to eq(true)
-  end
-
-  it 'should return picture info' do
-    expect(picture.info.author).to eq('Alejandro Escamilla')
+    create(:pic)
+    pictures = Pic.with_all_params(blur: 2, grayscale: 2)[:data]
+    expect(pictures.all? { |pic| pic.url.split('?')[-1] == 'grayscale=2&blur=2' }).to eq(true)
   end
 end

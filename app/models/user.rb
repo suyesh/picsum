@@ -17,6 +17,12 @@
 #   end
 
 class User < ApplicationRecord
+  ### Callbacks  #################################################################
+  ################################################################################
+  before_save do
+    (self.email = email.to_s.downcase) && (self.first_name = first_name.to_s.downcase) && (self.last_name = last_name.to_s.downcase)
+  end
+
   ### Validations  ###############################################################
   ################################################################################
   validates :first_name, presence: { message: "First name can't be blank" }
@@ -25,6 +31,7 @@ class User < ApplicationRecord
             uniqueness: { message: 'Email must be unique' }
   validates_format_of :email, with: /\A[^@\s]+@([^@\s]+\.)+[^@\s]+\z/
   validates :password, length: { in: 6..20 }
+  validates_confirmation_of :password, allow_nil: true, allow_blank: false
   has_secure_password
 
   ### Associations ###############################################################

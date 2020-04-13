@@ -5,15 +5,15 @@ FactoryBot.define do
     first_name { 'john' }
     last_name { 'doe' }
     factory :new_user do
-      email { 'john_appleseedNew@gmail.com' }
+      sequence(:email) { |n| "john_appleseedNew#{n.to_i}@gmail.com" }
       password { nil }
       password_confirmation { nil }
     end
 
     factory :existing_user do
-      email { 'john_appleseed@gmail.com' }
-      password { 'password' }
-      password_confirmation { 'password' }
+      sequence(:email) { |n| "john_appleseed#{n.to_i}@gmail.com" }
+      password { 'password12345' }
+      password_confirmation { 'password12345' }
     end
   end
 end

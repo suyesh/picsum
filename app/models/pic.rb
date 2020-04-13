@@ -24,6 +24,8 @@ class Pic < ApplicationRecord
   BASE_URL = 'https://picsum.photos/id'
   GRAYSCALE_PARAM = 'grayscale='
   BLUR_PARAM = 'blur='
+  DEFAULT_PER_PAGE = 25
+  DEFAULT_PAGE = 1
 
   ### Callbacks  #################################################################
   ################################################################################
@@ -44,10 +46,21 @@ class Pic < ApplicationRecord
 
   ### Scopes #####################################################################
   ################################################################################
-  scope :transformed, lambda { |grayscale: nil, blur: nil|
-    all.map do |pic|
-      pic.url = transform_url(grayscale: grayscale, blur: blur, url: pic.url)
-    end
+  scope :with_dimensions_query, lambda { |width: nil, height: nil|
+    dimensions_query = Pic.dimension_query_string(width: width, height: height)
+    return where(dimensions_query) if dimensions_query
+
+    self
+  }
+
+  scope :with_all_params, lambda { |grayscale: nil, blur: nil, page_param: DEFAULT_PAGE, per_param: DEFAULT_PER_PAGE, width: nil, height: nil|
+    current_page = with_dimensions_query(width: width, height: height).includes(:info).page(page_param).per(per_param)
+    {
+      data: Pic.generate_data(current_page: current_page, grayscale: grayscale, blur: blur),
+      current_page: current_page.current_page,
+      total_pages: current_page.total_pages,
+      total_count: current_page.total_count
+    }
   }
 
   ### Instance Methods (Public) ##################################################
@@ -61,17 +74,39 @@ class Pic < ApplicationRecord
     user.likes.find_by(pic_id: id).destroy
   end
 
-  private
-
-  ### Private Methods ############################################################
+  ### Class Methods ##############################################################
   ################################################################################
-
-  def transform_url(grayscale:, blur:, url:)
+  def self.transform_url(grayscale:, blur:, url:)
     new_url = "#{url}?"
     new_url += "#{GRAYSCALE_PARAM}#{grayscale}" if grayscale
     new_url += '&' if grayscale && blur
     new_url += "#{BLUR_PARAM}#{blur}" if blur
+    new_url
   end
+
+  def self.generate_data(current_page:, grayscale:, blur:)
+    current_page.map do |pic|
+      if grayscale || blur
+        pic.url = Pic.transform_url(grayscale: grayscale, blur: blur, url: pic.url)
+      end
+      pic
+    end
+  end
+
+  def self.dimension_query_string(width:, height:)
+    return nil if !height && !width
+
+    width_query_string = width ? "width = #{width}" : nil
+    height_query_string = height ? "height = #{height}" : nil
+    return "#{width_query_string} AND #{heigh_query_string}" if width && height
+
+    width_query_string || height_query_string
+  end
+
+  private
+
+  ### Private Methods ############################################################
+  ################################################################################
 
   def generate_url
     self.url = "#{BASE_URL}/#{picsum_id}/#{width}/#{height}"
