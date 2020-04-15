@@ -1,15 +1,5 @@
 import React, { Fragment } from 'react';
-import {
-  Toggles,
-  ImageGrid,
-  NavBar,
-  FilterDropdown,
-  AuthButtons,
-  ClearButton,
-  PageSwitcher,
-  Loading,
-  MainContainer,
-} from '../components';
+import { Toggles, ImageGrid, NavBar, FilterDropdown, ClearButton, PageSwitcher, MainContainer } from '../components';
 import { useApiData } from '../hooks';
 
 const App = () => {
@@ -28,7 +18,6 @@ const App = () => {
     showClearButton,
     heightFilterText,
     widthFilterText,
-    dataLoading,
   } = useApiData();
 
   return (
@@ -43,7 +32,6 @@ const App = () => {
           handleBlur={handleBlur}
           handleGrayscale={handleGrayscale}
         />
-        <AuthButtons />
       </NavBar>
       <MainContainer>
         <ImageGrid images={images} />
@@ -53,7 +41,6 @@ const App = () => {
           activePage={params.page}
           handlePageChange={handlePageChange}
         />
-        <Loading showLoading={dataLoading} />
       </MainContainer>
     </Fragment>
   );

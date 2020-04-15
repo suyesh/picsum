@@ -1,5 +1,6 @@
 import React from 'react';
 import { Menu } from 'semantic-ui-react';
+import withSizes from 'react-sizes';
 import styled from 'styled-components';
 
 const StyledMenu = styled(Menu)`
@@ -9,13 +10,19 @@ const StyledMenu = styled(Menu)`
   left: 0;
 `;
 
-const NavBar = ({ children }) => {
+const NavBarBase = ({ children, showBrand }) => {
   return (
     <StyledMenu size="mini">
-      <Menu.Item name="Picsum" />
+      {showBrand && <Menu.Item name="Picsum" />}
       <Menu.Menu position="right">{children}</Menu.Menu>
     </StyledMenu>
   );
 };
+
+const mapSizesToProps = ({ width }) => ({
+  showBrand: width > 600,
+});
+
+const NavBar = withSizes(mapSizesToProps)(NavBarBase);
 
 export { NavBar };
