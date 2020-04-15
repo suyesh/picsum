@@ -1,79 +1,19 @@
-import React, { useEffect, useState, useRef } from 'react';
+import React, { useEffect, useState } from 'react';
 import styled from 'styled-components';
-import Toggle from 'react-toggle';
 import axios from 'axios';
-import { Pagination } from 'semantic-ui-react';
+import _ from 'lodash';
+import { Pagination, Container, Button, Dropdown, Menu, Icon } from 'semantic-ui-react';
+import { Toggles, DisplayImage } from '../components';
 
-const Container = styled.main`
-  padding: 90px 10px 0 10px;
-  height: 100%;
-  width: 100%;
-`;
-
-const NavBar = styled.div`
-  height: 75px;
-  position: fixed;
-  top: 0;
-  right: 0;
-  left: 0;
-  background: #ffffff;
-  box-shadow: 0px 10px 20px rgba(31, 32, 65, 0.05);
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding-right: 45px;
-  padding-left: 45px;
+const Main = styled(Container)`
+  padding-top: 4.688em;
 `;
 
 const ImageGrid = styled.section`
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
-  grid-gap: 0.5px 10px;
+  grid-template-columns: repeat(auto-fill, minmax(12.5em, 1fr));
+  grid-gap: 0.031em 0.625em;
   grid-auto-rows: 10px;
-`;
-
-const Image = styled.img`
-  width: 200px;
-`;
-
-const Brand = styled.div`
-  font-size: 24px;
-  font-weight: var(--600);
-  color: #1f2041;
-`;
-
-const Label = styled.label`
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  flex-direction: column;
-
-  @media (min-width: 600px) {
-    flex-direction: row;
-  }
-`;
-
-const ToggleText = styled.span`
-  margin-left: 10px;
-`;
-
-const TogglesContainer = styled.div`
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-left: auto;
-  width: 200px;
-
-  @media (min-width: 600px) {
-    width: 300px;
-  }
-`;
-
-const DesktopToggles = styled.div`
-  display: none;
-  @media (min-width: 500px) {
-    display: block;
-  }
 `;
 
 const PaginationContainer = styled.div`
@@ -81,59 +21,32 @@ const PaginationContainer = styled.div`
   display: flex;
   justify-content: center;
   align-items: center;
-  margin-top: 30px;
-  margin-bottom: 30px;
+  margin-top: 1.875em;
+  margin-bottom: 1.875em;
 `;
 
-const DisplayImage = ({ image }) => {
-  const [heightSpan, setHeightSpan] = useState(0);
-  const imageRef = useRef(null);
+const StyledMenu = styled(Menu)`
+  position: fixed;
+  top: 0;
+  right: 0;
+  left: 0;
+`;
 
-  const setSpansValue = () => {
-    setHeightSpan(Math.ceil(imageRef.current.clientHeight / 10));
-  };
-
-  useEffect(() => {
-    imageRef.current.addEventListener('load', setSpansValue);
-  }, []);
-
-  return (
-    <div
-      style={{
-        gridRowEnd: `span ${heightSpan}`,
-      }}
-    >
-      <Image src={image.url} alt={image.url} ref={imageRef} width={image.width} />
-    </div>
-  );
-};
-
-const Toggles = ({ blur, grayscale, handleBlur, handleGrayscale }) => {
-  return (
-    <TogglesContainer>
-      <Label>
-        <Toggle defaultChecked={grayscale} onChange={handleGrayscale} />
-        <ToggleText>Grayscale</ToggleText>
-      </Label>
-      <Label>
-        <Toggle defaultChecked={blur} onChange={handleBlur} />
-        <ToggleText>Blur</ToggleText>
-      </Label>
-    </TogglesContainer>
-  );
+const INITIAL_PARAM = {
+  page: 1,
+  height: null,
+  width: null,
+  grayscale: null,
+  blur: null,
 };
 
 const App = () => {
   const [images, setImages] = useState(null);
   const [totalPages, setTotalPages] = useState(0);
+  const [heights, setHeights] = useState(null);
+  const [widths, setWidths] = useState(null);
 
-  const [params, setParams] = useState({
-    page: 1,
-    height: null,
-    width: null,
-    grayscale: null,
-    blur: null,
-  });
+  const [params, setParams] = useState(INITIAL_PARAM);
 
   const handleGrayscale = () => {
     if (params.grayscale == null) {
@@ -155,33 +68,107 @@ const App = () => {
     setParams({ ...params, page: data.activePage });
   };
 
+  const buildSizes = (imageData) => {
+    const allHeights = _.uniq(
+      imageData.reduce((accum, image) => {
+        return [...accum, image.height];
+      }, []),
+    );
+    const allWidths = _.uniq(
+      imageData.reduce((accum, image) => {
+        return [...accum, image.width];
+      }, []),
+    );
+    setHeights(allHeights);
+    setWidths(allWidths);
+  };
+
   useEffect(() => {
     axios.get('/api/pics', { params }).then((response) => {
       setImages(response.data);
       setTotalPages(response.data.total_pages);
+      if (!heights && !widths) {
+        buildSizes(response.data.data);
+      }
     });
   }, [params]);
 
+  const handleParams = ({ target: { dataset } }) => {
+    const paramName = dataset.param;
+    const paramValue = parseInt(dataset.value);
+    setParams({ ...params, [paramName]: paramValue });
+  };
+
   return (
-    <Container>
-      <NavBar>
-        <Brand>Picsum</Brand>
-        <DesktopToggles>
-          <Toggles
-            grayscale={!!params.grayscale}
-            blur={!!params.blur}
-            handleBlur={handleBlur}
-            handleGrayscale={handleGrayscale}
-          />
-        </DesktopToggles>
-      </NavBar>
-      <ImageGrid>{images && images.data.map((image) => <DisplayImage image={image} key={image.id} />)}</ImageGrid>
-      {images && images.total_pages && (
-        <PaginationContainer>
-          <Pagination boundaryRange={0} defaultActivePage={1} totalPages={totalPages} onPageChange={handlePageChange} />
-        </PaginationContainer>
-      )}
-    </Container>
+    <>
+      <StyledMenu size="mini">
+        <Menu.Item name="Picsum" />
+
+        <Menu.Menu position="right">
+          {!_.isEqual(params, INITIAL_PARAM) && (
+            <Menu.Item>
+              <Button icon="redo" circular onClick={() => setParams({ ...INITIAL_PARAM })} />
+            </Menu.Item>
+          )}
+
+          {heights && heights.length > 0 && (
+            <Dropdown item text={params.height ? `Height ${params.height}px` : 'Height'}>
+              <Dropdown.Menu>
+                {heights.map((height) => (
+                  <Dropdown.Item onClick={handleParams} data-param="height" data-value={height} key={height}>
+                    {height}
+                  </Dropdown.Item>
+                ))}
+              </Dropdown.Menu>
+            </Dropdown>
+          )}
+
+          {widths && widths.length > 0 && (
+            <Dropdown item text={params.width ? `Width ${params.width}px` : 'Width'}>
+              <Dropdown.Menu>
+                {widths.map((width) => (
+                  <Dropdown.Item onClick={handleParams} data-param="width" data-value={width} key={width}>
+                    {width}
+                  </Dropdown.Item>
+                ))}
+              </Dropdown.Menu>
+            </Dropdown>
+          )}
+          <Menu.Item>
+            <Toggles
+              grayscale={!!params.grayscale}
+              blur={!!params.blur}
+              handleBlur={handleBlur}
+              handleGrayscale={handleGrayscale}
+            />
+          </Menu.Item>
+          <Menu.Item>
+            <Button primary>Sign up</Button>
+          </Menu.Item>
+          <Menu.Item>
+            <Button>Sign in</Button>
+          </Menu.Item>
+        </Menu.Menu>
+      </StyledMenu>
+      <Main>
+        <ImageGrid>
+          {images &&
+            images.data.length > 0 &&
+            images.data.map((image) => <DisplayImage image={image} key={image.id} />)}
+        </ImageGrid>
+        {images && images.total_pages && (
+          <PaginationContainer>
+            <Pagination
+              activePage={params.page}
+              boundaryRange={0}
+              defaultActivePage={1}
+              totalPages={totalPages}
+              onPageChange={handlePageChange}
+            />
+          </PaginationContainer>
+        )}
+      </Main>
+    </>
   );
 };
 

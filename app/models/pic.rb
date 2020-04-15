@@ -98,7 +98,7 @@ class Pic < ApplicationRecord
 
     width_query_string = width ? "width = #{width}" : nil
     height_query_string = height ? "height = #{height}" : nil
-    return "#{width_query_string} AND #{heigh_query_string}" if width && height
+    return "#{width_query_string} AND #{height_query_string}" if width && height
 
     width_query_string || height_query_string
   end
