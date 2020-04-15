@@ -31,14 +31,14 @@
 
 Note: The app is also hosted in [heroku](https://calm-cliffs-76785.herokuapp.com/)
 
-First make sure you have rubu 2.6.5 installed with rails version 6. If not follow this [guide to install ruby on rails](https://gorails.com/setup/osx/10.15-catalina) , Make sure its ruby 2.6.5 and rails 6. This application uses postgresql database so you will also need postgreslql installed on your system.
+First make sure you have ruby 2.6.5 installed with rails version 6. If not follow this [guide to install ruby on rails](https://gorails.com/setup/osx/10.15-catalina) , Make sure its ruby 2.6.5 (or any version compatible with rails 6) and rails 6. This application uses postgresql database so you will also need postgreslql installed on your system.
 
 Once everything is installed. Navigate to the root of the application in terminal and run the following commands in order
 
 1.  `bundle install && yarn install`
 2.  `bundle exec rails db:setup` (This will create database and seed the data)
-3.  If Step 2 complains, try `bundle exec rake db:migrate && bundle exec rake db:seed`
-4.  If Step 3 complains, idk try standing up and stretching a little and repeat from step 2
+3.  If `step 2` complains, try `bundle exec rake db:migrate && bundle exec rake db:seed`
+4.  If `step 3` complains, idk try standing up and stretching a little and repeat from `step 2`
 5.  `yarn test` or `rspec` to run the test suit
 6.  `bin/rails s` to run the server at `http://localhost:3000`
 
