@@ -1,6 +1,7 @@
 import React from 'react';
 import styled from 'styled-components';
 import { Images } from './Images';
+import { NoResultsFound } from './NoResults';
 
 const Grid = styled.section`
   display: grid;
@@ -13,14 +14,18 @@ const Grid = styled.section`
 `;
 
 const ImageGrid = ({ images }) => {
-  const show = images && images.data.length > 0;
+  const showImages = images && images.data.length > 0;
+  const showNoResults = images && images.data.length < 1;
 
-  if (show) {
+  if (showImages) {
     return (
       <Grid>
         <Images images={images} />
       </Grid>
     );
+  }
+  if (showNoResults) {
+    return <NoResultsFound />;
   }
   return null;
 };

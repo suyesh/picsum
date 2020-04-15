@@ -36,7 +36,7 @@ const App = () => {
       <NavBar>
         <ClearButton showClear={showClearButton} onClear={handleClear} />
         <FilterDropdown values={heights} id="height" text={heightFilterText} onClick={handleParams} />
-        <FilterDropdown values={widths} id="height" text={widthFilterText} onClick={handleParams} />
+        <FilterDropdown values={widths} id="width" text={widthFilterText} onClick={handleParams} />
         <Toggles
           grayscale={params.grayscale}
           blur={params.blur}

@@ -15,13 +15,7 @@ const PageSwitcher = ({ show, activePage, totalPages, handlePageChange }) => {
   if (show && totalPages) {
     return (
       <PaginationContainer>
-        <Pagination
-          activePage={activePage}
-          boundaryRange={0}
-          defaultActivePage={1}
-          totalPages={totalPages}
-          onPageChange={handlePageChange}
-        />
+        <Pagination activePage={activePage} boundaryRange={0} totalPages={totalPages} onPageChange={handlePageChange} />
       </PaginationContainer>
     );
   }
