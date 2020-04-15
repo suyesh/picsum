@@ -1,5 +1,6 @@
 import React from 'react';
 import styled from 'styled-components';
+import { Menu } from 'semantic-ui-react';
 import Toggle from 'react-toggle';
 
 const ToggleText = styled.span`
@@ -23,16 +24,18 @@ const Label = styled.label`
 
 const Toggles = ({ blur, grayscale, handleBlur, handleGrayscale }) => {
   return (
-    <TogglesContainer>
-      <Label>
-        <Toggle defaultChecked={grayscale} onChange={handleGrayscale} />
-        <ToggleText>Grayscale</ToggleText>
-      </Label>
-      <Label>
-        <Toggle defaultChecked={blur} onChange={handleBlur} />
-        <ToggleText>Blur</ToggleText>
-      </Label>
-    </TogglesContainer>
+    <Menu.Item>
+      <TogglesContainer>
+        <Label>
+          <Toggle defaultChecked={grayscale} onChange={handleGrayscale} />
+          <ToggleText>Grayscale</ToggleText>
+        </Label>
+        <Label>
+          <Toggle defaultChecked={blur} onChange={handleBlur} />
+          <ToggleText>Blur</ToggleText>
+        </Label>
+      </TogglesContainer>
+    </Menu.Item>
   );
 };
 
