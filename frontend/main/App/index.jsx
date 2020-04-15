@@ -7,6 +7,11 @@ import { Toggles, DisplayImage } from '../components';
 
 const Main = styled(Container)`
   padding-top: 4.688em;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+  text-align: center;
 `;
 
 const ImageGrid = styled.section`
@@ -14,6 +19,9 @@ const ImageGrid = styled.section`
   grid-template-columns: repeat(auto-fill, minmax(12.5em, 1fr));
   grid-gap: 0.031em 0.625em;
   grid-auto-rows: 10px;
+  justify-items: center;
+  align-items: center;
+  margin: 0 auto;
 `;
 
 const PaginationContainer = styled.div`
