@@ -11,7 +11,7 @@ gem "jbuilder", "~> 2.7"
 gem "react-rails"
 gem "bcrypt", "~> 3.1", ">= 3.1.13"
 gem "knock", "~> 2.1", ">= 2.1.1"
-gem "httparty", "~> 0.18.0"
+gem "httparty", "~> 0.21.0"
 gem "bootsnap", ">= 1.4.2", require: false
 gem "responders"
 gem 'kaminari'
